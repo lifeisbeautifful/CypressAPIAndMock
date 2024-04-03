@@ -10,7 +10,18 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+Cypress.Commands.add('login', (username, password) => 
+{ 
+    cy.session([username, password], () => {
+        cy.visit("https://conduit.bondaracademy.com/login")
+        cy.get("[placeholder='Email']").type(username)
+        cy.get("[placeholder='Password']").type(password)
+        cy.get("[type='submit']").click()
+    },
+    {
+        cacheAcrossSpecs:true
+    })
+})
 //
 //
 // -- This is a child command --

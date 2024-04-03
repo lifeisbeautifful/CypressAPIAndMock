@@ -1,5 +1,10 @@
+import user from "../fixtures/user.json"
+import article from "../fixtures/article.json"
+
+
+
 describe("Homework mock and API", () => {
-    it("Get empty preview message UI", () => {
+    it.only("Get empty preview message UI", () => {
       const emptyArticles = {
         "articles":[]
       }
@@ -29,8 +34,45 @@ describe("Homework mock and API", () => {
       })
     })
 
-    it("Delete article via API", () => {
-        
+    it.only("Create article via API", () => {
+      let token = ""
+      
+    cy.request('POST', 'https://conduit-api.bondaracademy.com/api/users/login', user).then(response => {
+      const token = response.body.user.token;
+      console.log(token)
+      
+      cy.request({
+        url:"https://conduit-api.bondaracademy.com/api/articles/",
+        headers:{
+          'Authorization':"Token "+token,
+          'Content-Type':'application/json'
+        },
+        body:article,
+        method:"POST"
+      }).then(response => {
+        expect(response.status).to.equal(201)
+      })
+    })
+  })
+
+    it.only("Delete article via API", () => {
+        let token = ""
+
+        cy.request('POST', 'https://conduit-api.bondaracademy.com/api/users/login', user).then(res => {
+          token = res.body.user.token
+
+          cy.request({
+            url:'https://conduit-api.bondaracademy.com/api/articles/trylala1-1898',
+            headers:{
+              'Authorization':'Token ' + token
+            },
+            method:'DELETE'
+          }).then(res => {
+            expect(res.status).to.equal(204)
+            expect(res.duration).to.not.be.greaterThan(1000)
+            expect(res.body).to.equal('')
+          })
+        })
       })
   
   })
